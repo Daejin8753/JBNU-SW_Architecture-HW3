@@ -2,6 +2,7 @@
 
 플러그인·내부 서버 호출은 모두 kernel.py 를 거친다.
 """
+import os
 import secrets
 import time
 import unicodedata
@@ -25,6 +26,18 @@ def _warn(warnings, plugin, code, message):
 
 def _too_large(md):
     return len(md.encode("utf-8")) > MAX_MARKDOWN
+
+
+def _ext_mismatch(kernel, filename, fmt):
+    """파일 확장자가 판별한 형식의 확장자가 아니면 경고 문장, 맞거나 확장자가 없으면 None."""
+    ext = os.path.splitext(filename)[1].lower()
+    known = {"." + fmt} | ({".htm"} if fmt == "html" else set())
+    for m in kernel.converter_matchers():
+        if fmt in m["formats"]:
+            known |= {e.lower() for e in m["match"].get("extensions", [])}
+    if not ext or ext in known:
+        return None
+    return f"확장자 {ext[:20]} 와 판별한 형식({fmt})이 다름. {fmt} 로 처리함"
 
 
 def _select_posts(kernel, names, warnings):
@@ -81,6 +94,9 @@ def convert(kernel, data, raw_name, post_names, trace):
                                    members=members, matchers=kernel.converter_matchers())["format"]
         members = members or {}  # 변환기 계약: ZIP 이 아니면 빈 dict
         entry["format"] = fmt
+        mismatch = _ext_mismatch(kernel, entry["filename"], fmt)
+        if mismatch:  # 예: csv 변환기가 없을 때 .csv → txt
+            _warn(warnings, "kernel", "ext_mismatch", mismatch)
         conv = kernel.select_converter(fmt)
         entry["converter"] = conv
         payload = {"filename": entry["filename"], "format": fmt, "data": data, "members": members}

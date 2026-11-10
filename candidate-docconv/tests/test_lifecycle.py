@@ -42,12 +42,14 @@ class E1Extension(unittest.TestCase):
         # 설치 전: csv 는 txt 로 변환된다
         r = flow.convert(k, ms.sample_csv(), "s.csv", [], Trace("t"))
         self.assertEqual((r["format"], r["converter"]), ("txt", "txt_conv"))
+        self.assertEqual([w["code"] for w in r["warnings"]], ["ext_mismatch"])
         helpers.copy_in(os.path.join(helpers.EXAMPLES, "csv_conv.py"), pdir)
         self.assertIn("csv_conv", k.rescan()["added"])
         self.assertEqual(k.plugin_info("csv_conv")["state"], "available")
         k.install("csv_conv")
         r = flow.convert(k, ms.sample_csv(), "s.csv", [], Trace("t"))
         self.assertEqual((r["format"], r["converter"]), ("csv", "csv_conv"))
+        self.assertEqual(r["warnings"], [])
         self.assertIn("| 이름 | 수량 | 비고 |", r["markdown"])
         self.assertIn("|---|---|---|", r["markdown"])
 

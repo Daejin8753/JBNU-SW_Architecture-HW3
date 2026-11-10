@@ -428,9 +428,12 @@ class CsvExample(HttpBase):
     def test_csv_before_after_install(self):
         st, _, b = self.convert(ms.sample_csv(), "s.csv")
         self.assertEqual(b["format"], "txt")
+        self.assertEqual([(w["plugin"], w["code"]) for w in b["warnings"]], [("kernel", "ext_mismatch")])
+        self.assertIn(".csv", b["warnings"][0]["message"])
         self.install_csv()
         st, _, b = self.convert(ms.sample_csv(), "s.csv")
         self.assertEqual((b["format"], b["converter"]), ("csv", "csv_conv"))
+        self.assertEqual(b["warnings"], [])
         self.assertIn("| 사과 | 3 | 빨강 |", b["markdown"])
 
     def test_csv_field_limit_three_times(self):
