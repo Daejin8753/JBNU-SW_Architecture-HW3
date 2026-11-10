@@ -20,17 +20,19 @@ Python 3.14 표준 라이브러리만 씁니다. pdf 변환기만 PyMuPDF 를 �
 
 ### 한 줄로 실행 (발표·시연용, Windows)
 
-PowerShell 이나 cmd 창에 아래 한 줄을 붙여 넣습니다. 저장소를 바탕화면 `JBNU-HW3` 폴더에 받고, Python·PyMuPDF 를 준비하고, 시연 자료를 만든 뒤 서버를 켜고 브라우저를 엽니다.
+cmd 창이나 PowerShell 창에 아래 한 줄을 붙여 넣고 Enter 를 누릅니다. 바탕화면(없으면 사용자 폴더)에 저장소 ZIP 을 받아 `JBNU-SW_Architecture-HW3-main` 폴더에 풀고 `run.bat` 을 실행합니다. `run.bat` 은 Python·PyMuPDF 를 준비하고, 시연 자료를 만든 뒤 서버를 켜고 브라우저를 엽니다.
 
 ```
-powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/Daejin8753/JBNU-SW_Architecture-HW3/main/run.ps1 | iex"
+cmd /c "(cd /d %USERPROFILE%\Desktop 2>nul || cd /d %USERPROFILE%) && curl -fL -o hw3.zip https://github.com/Daejin8753/JBNU-SW_Architecture-HW3/archive/refs/heads/main.zip && tar -xf hw3.zip && del hw3.zip && JBNU-SW_Architecture-HW3-main\run.bat"
 ```
 
-- Python 3.10 이상이 있으면 그것을 씁니다. 없으면 uv 로 Python 3.14 를 그 폴더 안에만 받습니다. 관리자 권한은 필요 없고 인터넷은 필요합니다.
-- PyMuPDF 는 시험한 1.27.2.3 을 `JBNU-HW3\.run\venv` 에 설치합니다.
+- Windows 10(1803 이후)·11 에 들어 있는 curl·tar 만 씁니다. 인터넷은 필요하고 관리자 권한은 필요 없습니다.
+- Python 3.10 이상이 있으면 그것을 씁니다. 없으면 uv 로 Python 3.14 를 그 폴더 안에만 받습니다(약 190MB, 1~2분). PATH 는 바꾸지 않습니다.
+- PyMuPDF 는 시험한 1.27.2.3 을 그 폴더의 `.run\venv` 에 설치합니다.
 - 실행할 때마다 지난 시연 상태(`data/`, `plugins/csv_conv.py`)를 지우고 처음 상태로 시작합니다.
-- 8802 포트가 쓰이고 있으면 다음 빈 포트를 씁니다. 끄려면 그 창에서 Ctrl+C.
-- 저장소를 이미 받았으면 루트의 `run.bat` 을 더블클릭해도 같습니다. 두 번째부터는 내려받기·설치를 건너뛰어 몇 초 안에 켜집니다.
+- 8802 포트가 쓰이고 있으면 다음 빈 포트를 쓰고, 화면에 주소를 보여 줍니다. 끄려면 그 창에서 Ctrl+C(일괄 작업 종료를 물으면 Y) 또는 창을 닫습니다.
+- 저장소를 브라우저로 받았으면(Code → Download ZIP → 압축 풀기) 그 폴더의 `run.bat` 을 더블클릭해도 같습니다. 두 번째부터는 내려받기·설치를 건너뛰어 몇 초 안에 켜집니다.
+- 스크립트를 받아 바로 실행하는 PowerShell 형태(`irm … | iex`)는 Microsoft Defender 가 악성 명령으로 막아서 쓰지 않습니다.
 
 ## 폴더
 

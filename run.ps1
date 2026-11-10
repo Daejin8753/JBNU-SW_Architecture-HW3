@@ -1,12 +1,13 @@
 # 과제3 문서 → Markdown 변환기: 내려받기 · 준비 · 실행을 한 번에 한다.
 #
-# 한 줄 실행 (PowerShell 창, cmd 창, Win+R 어디서나):
-#   powershell -NoProfile -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/Daejin8753/JBNU-SW_Architecture-HW3/main/run.ps1 | iex"
+# 한 줄 실행 (cmd 창, PowerShell 창 어디서나): 바탕화면(없으면 사용자 폴더)에 저장소 ZIP 을 받아 풀고 run.bat 을 실행한다.
+#   cmd /c "(cd /d %USERPROFILE%\Desktop 2>nul || cd /d %USERPROFILE%) && curl -fL -o hw3.zip https://github.com/Daejin8753/JBNU-SW_Architecture-HW3/archive/refs/heads/main.zip && tar -xf hw3.zip && del hw3.zip && JBNU-SW_Architecture-HW3-main\run.bat"
 # 저장소를 이미 받아 둔 경우: 저장소 루트의 run.bat 를 더블클릭한다.
+# 스크립트를 받아 바로 실행하는 irm ... | iex 형태는 Microsoft Defender 가 악성 명령으로 막아서 쓰지 않는다.
 # (이 파일은 BOM 없는 UTF-8 이다. Windows PowerShell 5.1 에서 .\run.ps1 로 직접 돌리면 한글이 깨지므로 run.bat 를 쓴다.)
 #
 # 하는 일
-#   1. 폴더 준비: 바탕화면\JBNU-HW3 에 저장소 ZIP 을 받아 푼다(이미 있으면 그대로 쓴다).
+#   1. 폴더 준비: 이 파일이 저장소 안에 있으면 그 폴더를 쓴다. 이 파일만 따로 실행하면 바탕화면\JBNU-HW3 에 저장소 ZIP 을 받아 푼다.
 #   2. Python 준비: 설치된 Python 3.10 이상을 쓴다. 없으면 uv 로 Python 3.14 를 이 폴더 안에만 받는다(관리자 권한 불필요).
 #   3. 가상 환경 .run\venv 에 PyMuPDF 1.27.2.3(pdf 변환용, 시험한 버전)을 설치한다. 실패하면 pdf 만 빠지고 계속한다.
 #   4. 시연 자료(samples\)를 만들고, 지난 실행 상태(data\, plugins\csv_conv.py)를 지운다.
