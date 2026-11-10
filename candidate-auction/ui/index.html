@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>온라인 경매 (마이크로커널)</title>
+<link rel="stylesheet" href="/ui/style.css">
+</head>
+<body>
+<header>
+  <h1>온라인 경매</h1>
+  <label>내 이름 <input id="me" maxlength="20" placeholder="이름 입력"></label>
+  <span id="conn" class="conn off">연결 안 됨</span>
+</header>
+<nav>
+  <button class="tab active" data-tab="domain">경매</button>
+  <button class="tab" data-tab="plugins">플러그인 관리</button>
+  <button class="tab" data-tab="trace">요청 경로</button>
+</nav>
+
+<main>
+<section id="tab-domain" class="panel">
+  <div id="toast" class="toast hidden"></div>
+  <div class="cols">
+    <div class="col-left">
+      <h2>경매 만들기</h2>
+      <form id="create">
+        <label>물품명 <input name="item" maxlength="100" required></label>
+        <label>시작가(원) <input name="start_price" type="number" min="1" max="100000000" step="1" value="10000" required></label>
+        <label>진행 시간(초) <input name="duration_sec" type="number" min="1" max="3600" step="1" value="60" required></label>
+        <label>경매 방식 <select name="type" id="type-select"></select></label>
+        <button type="submit">만들기</button>
+      </form>
+      <div id="create-msg" class="msg"></div>
+      <h2>내 알림</h2>
+      <ul id="notifications" class="notes"></ul>
+    </div>
+    <div class="col-right">
+      <h2>경매 목록</h2>
+      <div id="auctions"></div>
+    </div>
+  </div>
+</section>
+
+<section id="tab-plugins" class="panel hidden">
+  <h2>플러그인 관리</h2>
+  <p class="help">플러그인 파일을 plugins 폴더에 넣고 [다시 검색] → [설치]. 재시작하지 않는다.</p>
+  <button id="rescan">다시 검색</button>
+  <div id="plugin-msg" class="msg"></div>
+  <table id="plugins">
+    <thead><tr><th>이름</th><th>종류</th><th>실행</th><th>상태</th><th>버전</th><th>세대</th><th>연속 실패</th><th>사유·설명</th><th>조작</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<section id="tab-trace" class="panel hidden">
+  <h2>요청 경로</h2>
+  <button id="trace-refresh">새로 조회</button>
+  <div class="cols">
+    <ul id="trace-list" class="trace-list col-left"></ul>
+    <div id="trace-detail" class="col-right"></div>
+  </div>
+</section>
+</main>
+<script src="/ui/app.js"></script>
+</body>
+</html>

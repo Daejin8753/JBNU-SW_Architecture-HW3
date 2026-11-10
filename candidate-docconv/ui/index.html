@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>문서 → Markdown 변환기</title>
+<link rel="stylesheet" href="/ui/style.css">
+</head>
+<body>
+<header>
+  <h1>문서 → Markdown 변환기 <small>마이크로커널</small></h1>
+  <nav>
+    <button class="tab active" data-tab="domain">변환</button>
+    <button class="tab" data-tab="plugins">플러그인 관리</button>
+    <button class="tab" data-tab="trace">요청 경로</button>
+  </nav>
+</header>
+<p id="msg" class="msg" hidden></p>
+
+<main>
+<section id="tab-domain" class="panel">
+  <div id="drop" class="drop" tabindex="0">
+    <p>파일을 여기에 끌어다 놓거나 <label class="pick">파일 고르기<input id="file" type="file" multiple hidden></label></p>
+    <p class="hint">txt · html · docx · hwpx · pdf (설치한 변환기에 따라 늘어남). 1개당 최대 20MB, 여러 개면 하나씩 차례로 보냅니다.</p>
+  </div>
+  <fieldset id="posts"><legend>후처리</legend><span class="hint">불러오는 중…</span></fieldset>
+
+  <h2>이번 변환 결과</h2>
+  <div id="results" class="results"><p class="hint">아직 없음</p></div>
+
+  <h2>변환 기록 <button id="reload-history" class="small">새로 고침</button></h2>
+  <table class="grid">
+    <thead><tr><th>시각</th><th>파일 이름</th><th>형식</th><th>변환기</th><th>ms</th><th>결과</th><th>경고</th><th></th></tr></thead>
+    <tbody id="history"></tbody>
+  </table>
+</section>
+
+<section id="tab-plugins" class="panel" hidden>
+  <p><button id="rescan">다시 검색</button> <span class="hint">plugins/ 폴더에 넣은 새 파일을 찾습니다(재시작 없음).</span></p>
+  <table class="grid">
+    <thead><tr><th>이름</th><th>종류</th><th>runtime</th><th>상태</th><th>버전</th><th>세대</th><th>연속 실패</th><th>형식·순서</th><th>설명 / 사유</th><th></th></tr></thead>
+    <tbody id="plugins"></tbody>
+  </table>
+</section>
+
+<section id="tab-trace" class="panel" hidden>
+  <div class="trace-wrap">
+    <div>
+      <h2>최근 요청 <button id="reload-trace" class="small">새로 고침</button></h2>
+      <ul id="trace-list" class="trace-list"></ul>
+    </div>
+    <div>
+      <h2 id="trace-title">요청을 고르세요</h2>
+      <table class="grid">
+        <thead><tr><th>#</th><th>부모</th><th>출발 → 도착</th><th>op</th><th>성공</th><th>ms</th></tr></thead>
+        <tbody id="hops"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+</main>
+<script src="/ui/app.js"></script>
+</body>
+</html>
