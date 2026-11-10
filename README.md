@@ -57,6 +57,7 @@ cmd /c "(cd /d %USERPROFILE%\Desktop 2>nul || cd /d %USERPROFILE%) && curl -fL -
 | `candidate-auction/` | 비교용 후보 A 온라인 경매. 구현 검토 지적 10건을 고치지 않은 상태입니다(보고서 1.4) |
 | `지시서/` | 구현 지시서(공통·A·B)와 교차 검토 13회 기록 |
 | `run.ps1`, `run.bat`, `run-auction.bat` | 한 줄 실행 스크립트(내려받기·준비·실행). `run.bat` 은 변환기, `run-auction.bat` 은 경매 |
+| `demo-add-csv.bat`, `demo-add-auction-type.bat` | 시연 중 새 플러그인 파일을 `plugins/` 에 복사(더블클릭). 변환기 시연 5, 경매 시연 6 에서 명령 입력 대신 씁니다 |
 | `prompt.md` | 과제를 진행하며 한 지시를 순서대로 적은 기록(보고서 부록 A) |
 | `과제2-회고.md` | 과제2 진행에서 부족했던 점과 이번에 바꾼 것 |
 

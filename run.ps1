@@ -253,11 +253,11 @@
     Write-Host "  코드 폴더: $app"
     if ($target -eq 'auction') {
         Write-Host '  사용자   : 탭을 두 개 엽니다. 탭마다 위쪽 이름 칸에 갑, 을처럼 다른 이름을 넣습니다.'
-        Write-Host "  시연 6 의 새 경매 방식 복사 (다른 창에서):"
-        Write-Host "    Copy-Item '$app\examples\lowest_unique.py' '$app\plugins\'"
+        Write-Host "  시연 6 의 새 경매 방식 복사: 아래 파일을 더블클릭합니다."
+        Write-Host "    $root\demo-add-auction-type.bat"
     } else {
-        Write-Host "  시연 5 의 csv 플러그인 복사 (다른 창에서):"
-        Write-Host "    Copy-Item '$app\examples\csv_conv.py' '$app\plugins\'"
+        Write-Host "  시연 5 의 csv 플러그인 복사: 아래 파일을 더블클릭합니다."
+        Write-Host "    $root\demo-add-csv.bat"
     }
     Write-Host '  끄기     : 이 창에서 Ctrl+C'
     Write-Host ''

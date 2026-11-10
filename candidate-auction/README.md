@@ -83,7 +83,7 @@ class Plugin(contract.Plugin):
 3. 탭 1에서 english 경매(시작가 10000, 60초)를 만든다. 탭 2에 바로 나타난다. 갑 10000 입찰 → 을 10100 입찰은 "10,500원 이상" 으로 거부 → 을 10500 입찰. 탭 1에 알림이 뜬다.
 4. sealed_second 경매를 만들고 둘 다 입찰한다. 마감 전에는 입찰 수만 보인다. 마감되면 두 탭에 낙찰자와 두 번째 금액이 함께 뜬다.
 5. dutch 경매를 만들고 [현재가 수락] → 바로 낙찰·마감.
-6. `examples/lowest_unique.py` 를 `plugins/` 에 복사 → [다시 검색] → `lowest_unique` [설치] → 경매 방식 목록에 나타난다. 재시작하지 않는다.
+6. `examples/lowest_unique.py` 를 `plugins/` 에 복사(저장소 루트의 `demo-add-auction-type.bat` 더블클릭) → [다시 검색] → `lowest_unique` [설치] → 경매 방식 목록에 나타난다. 재시작하지 않는다.
 7. `broken_type` [설치] → 그 방식으로 20초 경매를 만들고 입찰 3번 → 3번 모두 장애 메시지, 상태 `disabled`. 다른 경매는 계속 된다. 마감 시각이 지나면 그 경매는 `settle_pending` → [다시 켜기] → `closed`(유찰).
 8. 진행 중 경매가 있는 상태에서 `english` [제거] → 409 거부 문장.
 9. 입찰 결과 옆 [경로 보기] → `http_adapter → kernel → internal:storage … → registry → plugin:english → (plugin → kernel → internal:audit) … → plugin:outbid_notifier` hop 목록과 ms.

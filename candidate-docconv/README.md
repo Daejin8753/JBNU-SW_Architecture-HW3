@@ -95,7 +95,7 @@ class Plugin(contract.Plugin):
 2. [변환] 탭: `samples/sample.docx`, `sample.html`, `sample.hwpx`, `sample.pdf` 를 한꺼번에 끌어다 놓는다. 하나씩 차례로 변환되고, 제목(`#`)과 표가 Markdown 으로 나온다. [.md 내려받기]로 받는다.
 3. 후처리 체크박스 두 개를 켜고 `sample.txt` 를 다시 넣는다. 앞에 frontmatter 가 붙고 연속 빈 줄이 2개로 줄어든다.
 4. `zipbomb.docx`, `broken.pdf` 를 넣는다. 둘 다 실패 사유가 문장으로 보이고, [플러그인 관리]에서 `docx_conv`·`pdf_conv` 의 연속 실패 수는 0 이다.
-5. `sample.csv` 를 넣는다 → 형식 `txt`. `examples/csv_conv.py` 를 `plugins/` 에 복사(다른 창에서 `Copy-Item examples\csv_conv.py plugins\`) → [플러그인 관리] [다시 검색] → `csv_conv` [설치] → `sample.csv` 를 다시 넣으면 형식 `csv`, Markdown 표가 나온다(재시작 없음).
+5. `sample.csv` 를 넣는다 → 형식 `txt`. `examples/csv_conv.py` 를 `plugins/` 에 복사(저장소 루트의 `demo-add-csv.bat` 더블클릭, 또는 다른 창에서 `Copy-Item examples\csv_conv.py plugins\`) → [플러그인 관리] [다시 검색] → `csv_conv` [설치] → `sample.csv` 를 다시 넣으면 형식 `csv`, Markdown 표가 나온다(재시작 없음).
 6. [플러그인 관리]: `future_contract` 는 `rejected`(계약 버전 불일치) 사유가 보인다. `html_conv` [제거] → `sample.html` 변환이 "이 형식의 변환기가 설치되어 있지 않음" 으로 실패, 다른 형식은 정상 → [설치]로 되돌린다.
 7. 결과 카드나 기록의 [경로 보기] → [요청 경로] 탭에서 `http_adapter → kernel → internal:inspector → registry → plugin:… → internal:storage` hop 과 ms 를 본다.
 
