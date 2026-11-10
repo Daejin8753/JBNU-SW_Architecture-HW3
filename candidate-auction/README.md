@@ -4,6 +4,8 @@
 
 ## 실행
 
+Windows 에서는 저장소 루트의 `run-auction.bat` 을 더블클릭하면 Python 준비, 지난 상태 지우기, 서버 실행, 브라우저 탭 두 개 열기를 한 번에 합니다. 저장소를 아직 받지 않았으면 루트 [`README.md`](../README.md) 의 "비교용 후보 A(온라인 경매)를 한 줄로 실행" 줄을 씁니다.
+
 ```text
 python app.py                      # http://127.0.0.1:8801
 python app.py --port 8801 --data data --plugins plugins

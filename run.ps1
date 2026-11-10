@@ -1,19 +1,26 @@
-# 과제3 문서 → Markdown 변환기: 내려받기 · 준비 · 실행을 한 번에 한다.
+# 과제3 실행 스크립트: 내려받기 · 준비 · 실행을 한 번에 한다. 어느 시스템을 켤지는 bat 이 HW3_APP 로 정한다.
+#   run.bat         → 문서 → Markdown 변환기 (candidate-docconv, 제출한 시스템)
+#   run-auction.bat → 온라인 경매 (candidate-auction, 비교용 후보 A)
 #
 # 한 줄 실행 (cmd 창, PowerShell 창 어디서나): 바탕화면(없으면 사용자 폴더)에 저장소 ZIP 을 받아 풀고 run.bat 을 실행한다.
 #   cmd /c "(cd /d %USERPROFILE%\Desktop 2>nul || cd /d %USERPROFILE%) && curl -fL -o hw3.zip https://github.com/Daejin8753/JBNU-SW_Architecture-HW3/archive/refs/heads/main.zip && tar -xf hw3.zip && del hw3.zip && JBNU-SW_Architecture-HW3-main\run.bat"
-# 저장소를 이미 받아 둔 경우: 저장소 루트의 run.bat 를 더블클릭한다.
+# 경매는 위 줄 끝의 run.bat 을 run-auction.bat 으로 바꾼다. 이미 받은 폴더가 있으면 파일을 덮어쓰고 .run\venv 는 그대로 쓴다.
+# 저장소를 이미 받아 둔 경우: 저장소 루트의 run.bat(또는 run-auction.bat)을 더블클릭한다.
 # 스크립트를 받아 바로 실행하는 irm ... | iex 형태는 Microsoft Defender 가 악성 명령으로 막아서 쓰지 않는다.
-# (이 파일은 BOM 없는 UTF-8 이다. Windows PowerShell 5.1 에서 .\run.ps1 로 직접 돌리면 한글이 깨지므로 run.bat 를 쓴다.)
+# (이 파일은 BOM 없는 UTF-8 이다. Windows PowerShell 5.1 에서 .\run.ps1 로 직접 돌리면 한글이 깨지므로 bat 을 쓴다.)
 #
 # 하는 일
 #   1. 폴더 준비: 이 파일이 저장소 안에 있으면 그 폴더를 쓴다. 이 파일만 따로 실행하면 바탕화면\JBNU-HW3 에 저장소 ZIP 을 받아 푼다.
 #   2. Python 준비: 설치된 Python 3.10 이상을 쓴다. 없으면 uv 로 Python 3.14 를 이 폴더 안에만 받는다(관리자 권한 불필요).
-#   3. 가상 환경 .run\venv 에 PyMuPDF 1.27.2.3(pdf 변환용, 시험한 버전)을 설치한다. 실패하면 pdf 만 빠지고 계속한다.
-#   4. 시연 자료(samples\)를 만들고, 지난 실행 상태(data\, plugins\csv_conv.py)를 지운다.
-#   5. 빈 포트(8802 부터)를 골라 서버를 켜고 브라우저를 연다. 끄려면 이 창에서 Ctrl+C.
+#      두 시스템이 같은 가상 환경 .run\venv 를 쓴다.
+#   3. 변환기: .run\venv 에 PyMuPDF 1.27.2.3(pdf 변환용, 시험한 버전)을 설치한다. 실패하면 pdf 만 빠지고 계속한다.
+#      경매: 표준 라이브러리만 써서 설치할 것이 없다.
+#   4. 지난 실행 상태를 지운다. 변환기는 data\, plugins\csv_conv.py 를 지우고 시연 자료(samples\)를 만든다.
+#      경매는 data\, plugins\lowest_unique.py 를 지운다.
+#   5. 빈 포트(변환기 8802~8830, 경매 8801 다음 8831~8850)를 골라 서버를 켜고 브라우저를 연다. 경매는 사용자 두 명용으로 탭을 두 개 연다.
+#      끄려면 이 창에서 Ctrl+C. 두 시스템을 각자 다른 창에서 함께 켜 두어도 된다.
 #
-# 시험용 환경 변수: HW3_DIR(설치 폴더), HW3_ZIP(ZIP 경로나 주소), HW3_FORCE_UV=1, HW3_NO_BROWSER=1
+# 시험용 환경 변수: HW3_APP(docconv|auction), HW3_DIR(설치 폴더), HW3_ZIP(ZIP 경로나 주소), HW3_FORCE_UV=1, HW3_NO_BROWSER=1
 
 & {
     $ErrorActionPreference = 'Stop'
@@ -67,23 +74,37 @@
         }
     }
 
+    # 켤 시스템. bat 이 HW3_APP 를 정하고, 없으면 변환기다.
+    $target = 'docconv'
+    if ($env:HW3_APP) { $target = $env:HW3_APP.Trim().ToLowerInvariant() }
+    if (@('docconv', 'auction') -notcontains $target) {
+        Fail "HW3_APP 값 '$($env:HW3_APP)' 을(를) 모릅니다. docconv 또는 auction 이어야 합니다."
+        return
+    }
+    $appName = "candidate-$target"
+    if ($target -eq 'auction') {
+        Write-Host '온라인 경매 (비교용 후보 A) 를 준비합니다.' -ForegroundColor Cyan
+    } else {
+        Write-Host '문서 → Markdown 변환기 (제출한 시스템) 를 준비합니다.' -ForegroundColor Cyan
+    }
+
     # ---------------------------------------------------------------- 1. 폴더
     Step 1 '폴더 준비'
     $root = $env:HW3_DIR
-    if (-not $root -and $PSScriptRoot -and (Test-Path (Join-Path $PSScriptRoot 'candidate-docconv\app.py'))) { $root = $PSScriptRoot }
+    if (-not $root -and $PSScriptRoot -and (Test-Path (Join-Path $PSScriptRoot "$appName\app.py"))) { $root = $PSScriptRoot }
     if (-not $root) {
         $desk = [Environment]::GetFolderPath('Desktop')
         if (-not $desk -or -not (Test-Path $desk)) { $desk = $HOME }
         $root = Join-Path $desk 'JBNU-HW3'
     }
     $root = [IO.Path]::GetFullPath($root)
-    $app = Join-Path $root 'candidate-docconv'
+    $app = Join-Path $root $appName
 
     if (Test-Path (Join-Path $app 'app.py')) {
         Info "이미 있는 폴더를 씁니다: $root"
     } else {
         if ((Test-Path $root) -and (Get-ChildItem -Force $root | Select-Object -First 1)) {
-            Fail "$root 폴더가 비어 있지 않은데 candidate-docconv 가 없습니다. 폴더를 지우거나 옮긴 뒤 다시 실행하십시오."
+            Fail "$root 폴더가 비어 있지 않은데 $appName 이 없습니다. 폴더를 지우거나 옮긴 뒤 다시 실행하십시오."
             return
         }
         $src = $env:HW3_ZIP
@@ -97,8 +118,8 @@
             Expand-Archive -LiteralPath $zip -DestinationPath (Join-Path $tmp 'x')
             $top = Join-Path $tmp 'x'
             $dirs = @(Get-ChildItem -LiteralPath $top -Directory)
-            if (-not (Test-Path (Join-Path $top 'candidate-docconv')) -and $dirs.Count -eq 1) { $top = $dirs[0].FullName }
-            if (-not (Test-Path (Join-Path $top 'candidate-docconv\app.py'))) { throw 'ZIP 안에 candidate-docconv\app.py 가 없습니다.' }
+            if (-not (Test-Path (Join-Path $top $appName)) -and $dirs.Count -eq 1) { $top = $dirs[0].FullName }
+            if (-not (Test-Path (Join-Path $top "$appName\app.py"))) { throw "ZIP 안에 $appName\app.py 가 없습니다." }
             New-Item -ItemType Directory -Force -Path $root | Out-Null
             Get-ChildItem -LiteralPath $top -Force | Move-Item -Destination $root
         } catch {
@@ -167,27 +188,37 @@
         Info "가상 환경 준비 완료 (Python $(Get-PyVersion $vpy @()))"
     }
 
-    # ---------------------------------------------------------------- 3. PyMuPDF
-    Step 3 'PyMuPDF 확인 (pdf 변환용)'
-    if ((Invoke-Quiet $vpy @('-c', 'import fitz')).Code -eq 0) {
-        Info '이미 설치되어 있습니다'
+    # ---------------------------------------------------------------- 3. 추가 라이브러리
+    if ($target -eq 'auction') {
+        Step 3 '추가 라이브러리 확인'
+        Info '경매는 Python 표준 라이브러리만 써서 설치할 것이 없습니다'
     } else {
-        Info '설치하는 중...'
-        $hasPip = (Invoke-Quiet $vpy @('-m', 'pip', '--version')).Code -eq 0
-        # 시험을 마친 버전을 먼저 받고, 안 되면 최신판을 받는다.
-        foreach ($spec in @("pymupdf==$PyMuPdfVersion", 'pymupdf')) {
-            if ($hasPip) { & $vpy -m pip install --quiet --disable-pip-version-check $spec }
-            elseif (Test-Path $uv) { & $uv pip install --quiet --python $vpy $spec }
-            if ((Invoke-Quiet $vpy @('-c', 'import fitz')).Code -eq 0) { break }
+        Step 3 'PyMuPDF 확인 (pdf 변환용)'
+        if ((Invoke-Quiet $vpy @('-c', 'import fitz')).Code -eq 0) {
+            Info '이미 설치되어 있습니다'
+        } else {
+            Info '설치하는 중...'
+            $hasPip = (Invoke-Quiet $vpy @('-m', 'pip', '--version')).Code -eq 0
+            # 시험을 마친 버전을 먼저 받고, 안 되면 최신판을 받는다.
+            foreach ($spec in @("pymupdf==$PyMuPdfVersion", 'pymupdf')) {
+                if ($hasPip) { & $vpy -m pip install --quiet --disable-pip-version-check $spec }
+                elseif (Test-Path $uv) { & $uv pip install --quiet --python $vpy $spec }
+                if ((Invoke-Quiet $vpy @('-c', 'import fitz')).Code -eq 0) { break }
+            }
+            $r = Invoke-Quiet $vpy @('-c', 'import pymupdf;print(pymupdf.VersionBind)')
+            if ($r.Code -eq 0) { Info "설치했습니다 (PyMuPDF $($r.Out))" }
+            else { Warn 'PyMuPDF 를 설치하지 못했습니다. pdf 시연만 빠지고 나머지는 됩니다.' }
         }
-        $r = Invoke-Quiet $vpy @('-c', 'import pymupdf;print(pymupdf.VersionBind)')
-        if ($r.Code -eq 0) { Info "설치했습니다 (PyMuPDF $($r.Out))" }
-        else { Warn 'PyMuPDF 를 설치하지 못했습니다. pdf 시연만 빠지고 나머지는 됩니다.' }
     }
 
     # ---------------------------------------------------------------- 4. 시연 자료와 초기 상태
-    Step 4 '시연 자료 만들기, 지난 실행 상태 지우기'
-    $stale = @((Join-Path $app 'data'), (Join-Path $app 'plugins\csv_conv.py'))
+    if ($target -eq 'auction') {
+        Step 4 '지난 실행 상태 지우기'
+        $stale = @((Join-Path $app 'data'), (Join-Path $app 'plugins\lowest_unique.py'))
+    } else {
+        Step 4 '시연 자료 만들기, 지난 실행 상태 지우기'
+        $stale = @((Join-Path $app 'data'), (Join-Path $app 'plugins\csv_conv.py'))
+    }
     foreach ($p in $stale) {
         if (-not (Test-Path $p)) { continue }
         try { Remove-Item -LiteralPath $p -Recurse -Force }
@@ -196,33 +227,53 @@
             return
         }
     }
-    & $vpy -B (Join-Path $app 'tools\make_samples.py') | Out-Null
-    if ($LASTEXITCODE -ne 0) { Fail '시연 자료를 만들지 못했습니다.'; return }
-    Info ("samples\: " + ((Get-ChildItem -LiteralPath (Join-Path $app 'samples') -File | ForEach-Object Name) -join ', '))
+    if ($target -eq 'auction') {
+        Info '경매 기록(data\)과 시연 중 복사한 lowest_unique.py 를 지웠습니다. 플러그인은 기본 상태로 시작합니다.'
+    } else {
+        & $vpy -B (Join-Path $app 'tools\make_samples.py') | Out-Null
+        if ($LASTEXITCODE -ne 0) { Fail '시연 자료를 만들지 못했습니다.'; return }
+        Info ("samples\: " + ((Get-ChildItem -LiteralPath (Join-Path $app 'samples') -File | ForEach-Object Name) -join ', '))
+    }
 
     # ---------------------------------------------------------------- 5. 실행
     Step 5 '서버 실행'
+    if ($target -eq 'auction') {
+        $ports = @(8801) + (8831..8850); $range = '8801, 8831~8850'; $tabs = 2
+    } else {
+        $ports = 8802..8830; $range = '8802~8830'; $tabs = 1
+    }
     $port = 0
-    foreach ($p in 8802..8830) { if (-not (Test-PortBusy $p)) { $port = $p; break } }
-    if (-not $port) { Fail '8802~8830 포트가 모두 쓰이고 있습니다.'; return }
-    if ($port -ne 8802) { Warn "8802 포트에 이미 다른 서버가 있어 $port 포트를 씁니다. 예전에 켠 서버 창이 있으면 닫아 두십시오." }
+    foreach ($p in $ports) { if (-not (Test-PortBusy $p)) { $port = $p; break } }
+    if (-not $port) { Fail "$range 포트가 모두 쓰이고 있습니다."; return }
+    if ($port -ne $ports[0]) { Warn "$($ports[0]) 포트에 이미 다른 서버가 있어 $port 포트를 씁니다. 예전에 켠 서버 창이 있으면 닫아 두십시오." }
     $url = "http://127.0.0.1:$port"
 
     Write-Host ''
     Write-Host "  브라우저 : $url" -ForegroundColor Green
     Write-Host "  코드 폴더: $app"
-    Write-Host "  시연 5 의 csv 플러그인 복사 (다른 창에서):"
-    Write-Host "    Copy-Item '$app\examples\csv_conv.py' '$app\plugins\'"
+    if ($target -eq 'auction') {
+        Write-Host '  사용자   : 탭을 두 개 엽니다. 탭마다 위쪽 이름 칸에 갑, 을처럼 다른 이름을 넣습니다.'
+        Write-Host "  시연 6 의 새 경매 방식 복사 (다른 창에서):"
+        Write-Host "    Copy-Item '$app\examples\lowest_unique.py' '$app\plugins\'"
+    } else {
+        Write-Host "  시연 5 의 csv 플러그인 복사 (다른 창에서):"
+        Write-Host "    Copy-Item '$app\examples\csv_conv.py' '$app\plugins\'"
+    }
     Write-Host '  끄기     : 이 창에서 Ctrl+C'
     Write-Host ''
 
     $job = $null
     if (-not $env:HW3_NO_BROWSER) {
-        $job = Start-Job -ArgumentList $url, $port -ScriptBlock {
-            param($u, $p)
+        $job = Start-Job -ArgumentList $url, $port, $tabs -ScriptBlock {
+            param($u, $p, $n)
             for ($i = 0; $i -lt 80; $i++) {
-                try { $c = New-Object Net.Sockets.TcpClient('127.0.0.1', $p); $c.Close(); Start-Process $u; return }
+                $up = $false
+                try { $c = New-Object Net.Sockets.TcpClient('127.0.0.1', $p); $c.Close(); $up = $true }
                 catch { Start-Sleep -Milliseconds 250 }
+                if ($up) {
+                    for ($k = 0; $k -lt $n; $k++) { if ($k) { Start-Sleep -Milliseconds 1500 }; Start-Process $u }
+                    return
+                }
             }
         }
     }
