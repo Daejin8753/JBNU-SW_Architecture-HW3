@@ -5,7 +5,7 @@
 - 제출 보고서: [`과제3-보고서.pdf`](과제3-보고서.pdf) — 진행 과정, 시스템 화면, 구조, 코어와 서버의 인터랙션, 품질 문제와 해결, 검증, 사용한 프롬프트
 - 사용한 프롬프트: [`prompt.md`](prompt.md)
 
-## 낸 시스템
+## 제출한 시스템
 
 `candidate-docconv/` — 문서 → Markdown 변환기. txt·html·docx·hwpx·pdf 를 Markdown 으로 바꾸는 로컬 웹 앱입니다. 형식별 변환기와 후처리기가 플러그인이고, 서버를 끄지 않고 플러그인을 설치·제거합니다.
 
@@ -40,7 +40,7 @@ cmd /c "(cd /d %USERPROFILE%\Desktop 2>nul || cd /d %USERPROFILE%) && curl -fL -
 |---|---|
 | `report.html`, `과제3-보고서.pdf` | 보고서(HTML 원본과 제출용 PDF) |
 | `capture/` | 보고서에 넣은 화면 캡처 |
-| `candidate-docconv/` | 낸 시스템(후보 B) |
+| `candidate-docconv/` | 제출한 시스템(후보 B) |
 | `candidate-auction/` | 비교용 후보 A 온라인 경매. 구현 검토 지적 10건을 고치지 않은 상태입니다(보고서 1.4) |
 | `지시서/` | 구현 지시서(공통·A·B)와 교차 검토 13회 기록 |
 | `run.ps1`, `run.bat` | 한 줄 실행 스크립트(내려받기·준비·실행) |
