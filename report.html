@@ -197,7 +197,7 @@ footer { margin-top: 40px; font-size: 12.5px; color: var(--muted); border-top: 1
   <text x="605" y="402" text-anchor="middle" font-size="10.5" fill="#5b6475">JSON 한 줄</text>
   <text x="20" y="460" font-size="11.5" fill="#5b6475">화살표는 호출과 응답입니다. 내부 서버와 외부 서버, 외부 서버끼리, 어댑터와 서버 사이에는 선이 없습니다(모두 코어를 거칩니다).</text>
 </svg>
-<figcaption>그림 1. 구성요소 배치. <code>plugin_host.py</code> 는 <code>kernel/</code> 에 있지만 자식 프로세스 안에서 돕니다.</figcaption>
+<figcaption>그림 4. 구성요소 배치. <code>plugin_host.py</code> 는 <code>kernel/</code> 에 있지만 자식 프로세스 안에서 돕니다.</figcaption>
 </figure>
 
 <table>
@@ -238,7 +238,7 @@ footer { margin-top: 40px; font-size: 12.5px; color: var(--muted); border-top: 1
 <p>이 장치는 구조 제약을 지키게 하는 장치이고 보안 샌드박스는 아닙니다. 플러그인 작성자는 신뢰하는 로컬 개발자로 봅니다.</p>
 
 <h3>4.4 대표 요청의 호출 경로</h3>
-<p>pdf 파일 하나를 변환하는 요청입니다. pdf 변환기는 별도 프로세스에서 돕니다. 요청 경로 화면(<code>/api/trace/{id}</code>)에 같은 순서가 나옵니다(그림 4).</p>
+<p>pdf 파일 하나를 변환하는 요청입니다. pdf 변환기는 별도 프로세스에서 돕니다. 요청 경로 화면(<code>/api/trace/{id}</code>)에 같은 순서가 나옵니다(그림 5).</p>
 <table>
 <tr><th>#</th><th>파일 : 함수</th><th>하는 일</th></tr>
 <tr><td>1</td><td><code>adapters/http_adapter.py</code> : <code>Handler.do_POST</code> → <code>_traced</code></td><td>출처·크기를 확인하고 trace 를 열어 코어에 넘김</td></tr>
@@ -251,7 +251,7 @@ footer { margin-top: 40px; font-size: 12.5px; color: var(--muted); border-top: 1
 <tr><td>8</td><td><code>kernel/kernel.py</code> : <code>call</code> → <code>_finish</code></td><td>출력 계약·값 검사, 성공·장애 집계</td></tr>
 <tr><td>9</td><td><code>kernel/flow.py</code> : <code>_save</code> → <code>internal/storage.py</code> : <code>Storage.save</code>, <code>Storage.record</code></td><td>원본·결과 파일 저장, 변환 기록</td></tr>
 </table>
-<figure><img src="capture/4-요청-경로.jpg" alt="요청 경로"><figcaption>그림 4. 같은 요청의 hop 7개와 ms. 모든 hop 이 <code>kernel</code> 에서 나갑니다. 플러그인끼리, 또는 플러그인과 저장소가 직접 만나는 hop 은 없습니다.</figcaption></figure>
+<figure><img src="capture/4-요청-경로.jpg" alt="요청 경로"><figcaption>그림 5. 같은 요청의 hop 7개와 ms. 모든 hop 이 <code>kernel</code> 에서 나갑니다. 플러그인끼리, 또는 플러그인과 저장소가 직접 만나는 hop 은 없습니다.</figcaption></figure>
 
 <h2>5. 품질 문제와 해결</h2>
 <table class="qa">
@@ -284,7 +284,7 @@ footer { margin-top: 40px; font-size: 12.5px; color: var(--muted); border-top: 1
 <tr><td>B 도메인</td><td>형식 변환, 후처리, ZIP 공격, 필요한 항목이 없는 ZIP, XML 인코딩, 깨진 HTML 3회, 깊은 중첩, 긴 섹션 번호, 크기 경계, 저장 실패, PDF, CSV 예제</td><td class="num">25</td></tr>
 </table>
 <h3>6.2 브라우저 시연</h3>
-<p>README 의 5분 시연 절차 7단계를 브라우저에서 직접 따라갔습니다(그림 1~4). 네 형식 변환, 후처리, 압축 폭탄·깨진 pdf 거부(연속 실패 수 0 유지), csv 변환기를 서버를 끄지 않고 설치, html 변환기 제거 → html 만 실패하고 docx 는 정상, 요청 경로 보기까지 모두 설명대로 동작했습니다.</p>
+<p>README 의 5분 시연 절차 7단계를 브라우저에서 직접 따라갔습니다(그림 1~3, 5). 네 형식 변환, 후처리, 압축 폭탄·깨진 pdf 거부(연속 실패 수 0 유지), csv 변환기를 서버를 끄지 않고 설치, html 변환기 제거 → html 만 실패하고 docx 는 정상, 요청 경로 보기까지 모두 설명대로 동작했습니다.</p>
 <h3>6.3 일부러 깨뜨린 입력</h3>
 <p>시험과 별도로, 메인 에이전트가 직접 만든 입력을 서버에 보내 응답과 플러그인 상태 55항목을 확인했습니다(첫 검수 46항목, 2차 검토 HOLD 확인 9항목). 54항목이 지시서대로였습니다.</p>
 <ul>
